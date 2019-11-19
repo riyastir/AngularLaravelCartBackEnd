@@ -29,14 +29,7 @@ class CartController extends Controller
 		$discount = 0;
 		$free_qty = 0;
 		$cartItems = Cart::where('user_id', $customer_id)->where('product_id', $request->product_id)->get();
-		/* Special Pricing Check */
-		if (!isset($discount_details)) {
-			$reduction = ($role_disc / 100) * $unit_price;
-			$reduction = round($reduction, 2);
-			$unit_price = $unit_price - $reduction;
-		} else {
-			$reduction = 0;
-		}
+		
 		//If Product already in cart then add quantity and check the discount conditions
 		if (count($cartItems) > 0) {
 			$request->quantity = $request->quantity + $cartItems[0]->quantity;
@@ -46,8 +39,10 @@ class CartController extends Controller
 				if ($request->quantity >= $discount_details->min_qty) {
 					$discount = $unit_price - $discount_details->flat_price;
 					$unit_price = $discount_details->flat_price;
+					$special_price = true;
 				} else {
 					$discount = 0;
+					$special_price = false;
 				}
 			} else if ($discount_details->method == 'Extra') {
 				if (count($cartItems) > 0) {
@@ -57,8 +52,10 @@ class CartController extends Controller
 						$free_qty = $discount_details->free_qty * $discount_set;
 						$free_qty = (int) $free_qty;
 						$request->quantity = $request->quantity - (int) $free_qty;
+						$special_price = true;
 					} else {
 						$free_qty = 0;
+						$special_price = false;
 					}
 				}
 				$discount_set = $request->quantity / $discount_details->min_qty;
@@ -66,10 +63,20 @@ class CartController extends Controller
 					$free_qty = $discount_details->free_qty * $discount_set;
 					$free_qty = (int) $free_qty;
 					$request->quantity = $request->quantity + (int) $free_qty;
+					$special_price = true;
 				} else {
 					$free_qty = 0;
+					$special_price = false;
 				}
 			}
+		}
+		/* Special Pricing Check */
+		if ($special_price == false) {
+			$reduction = ($role_disc / 100) * $unit_price;
+			$reduction = round($reduction, 2);
+			$unit_price = $unit_price - $reduction;
+		} else {
+			$reduction = 0;
 		}
 		$discount_id = @$discount_details->id;
 		$total_price = ($request->quantity - $free_qty) * $unit_price;
