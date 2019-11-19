@@ -3,13 +3,38 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request; 
 use App\Http\Controllers\Controller; 
 use App\Product; 
+use App\Discount; 
 use Illuminate\Support\Facades\Auth; 
 
 class ProductsController extends Controller 
 {
 	public $successStatus = 200;
 	public function getProducts(){
+		$user = Auth::user();
 		$products = Product::get();
-		return response()->json(['response' => $products], $this-> successStatus); 
+		$role_id = $user->role_id;
+		$result = array();
+		foreach($products as $p){
+			$text = null;
+			@$discount_details = Discount::where('product_id', $p->id)->where('role_id', $role_id)->get();
+			if(@$discount_details[0]->method == 'Flat'){
+				$text = 'Buy '.$discount_details[0]->min_qty.' or more RM '.$discount_details[0]->flat_price.' per unit';
+			}
+			elseif(@$discount_details[0]->method == 'Extra'){
+				$text = 'Get a '.$discount_details[0]->free_qty.' for '.$discount_details[0]->min_qty.' deal';
+			}
+
+			$product = [
+				'id'=>$p->id,
+				'name'=>$p->name,
+				'base_price'=>$p->base_price,
+				'image'=>$p->image,
+				'discount_id'=> @$discount_details[0]->id,
+				'discount_text'=> $text,
+			];
+			$result[] = $product;
+		}
+		
+		return response()->json(['response' => $result], $this-> successStatus); 
 	}
 }
