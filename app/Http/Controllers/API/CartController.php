@@ -18,7 +18,7 @@ class CartController extends Controller
 	{	
 		$user = Auth::user();
 		if(isset($user->id)){
-		$customer_id = $request->user_id;
+		$customer_id = $user->id;
 		$user = User::where('id', $customer_id)->first();
 		$role_details = Role::find($user->role_id);
 		$role_disc = $role_details->discount;
