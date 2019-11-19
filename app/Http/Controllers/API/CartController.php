@@ -153,7 +153,7 @@ class CartController extends Controller
 		$result = [
 			'items' => $cartItems,
 			'count' => count($cartItems),
-			'total'	=> $total
+			'total'	=> number_format($total, 2)
 		];
 		}
 		else{
