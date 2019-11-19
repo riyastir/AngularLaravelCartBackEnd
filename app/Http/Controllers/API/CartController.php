@@ -28,7 +28,7 @@ class CartController extends Controller
 		$total_price = 0;
 		$discount = 0;
 		$free_qty = 0;
-		$cartItems = Cart::where('user_id', $request->user_id)->where('product_id', $request->product_id)->get();
+		$cartItems = Cart::where('user_id', $customer_id)->where('product_id', $request->product_id)->get();
 		/* Special Pricing Check */
 		if (!isset($discount_details)) {
 			$reduction = ($role_disc / 100) * $unit_price;
@@ -88,7 +88,7 @@ class CartController extends Controller
 			$cartUpdate = Cart::where('id', $cartId)->update($data);
 			if ($cartUpdate) {
 				$result = [
-					'user_id' => $request->user_id,
+					'user_id' => $customer_id,
 					'product_id' => $request->product_id,
 					'role_disc' => $role_disc,
 					'reduction' => $reduction,
@@ -106,7 +106,7 @@ class CartController extends Controller
 			}
 		} else {
 			$data = [
-				'user_id' => $request->user_id,
+				'user_id' => $customer_id,
 				'product_id' => $request->product_id,
 				'quantity' => $request->quantity,
 				'unit_price' => $unit_price,
@@ -116,7 +116,7 @@ class CartController extends Controller
 			$cart = Cart::create($data);
 			if ($cart->id) {
 				$result = [
-					'user_id' => $request->user_id,
+					'user_id' => $customer_id,
 					'product_id' => $request->product_id,
 					'role_disc' => $role_disc,
 					'reduction' => $reduction,
@@ -205,7 +205,8 @@ class CartController extends Controller
 
 		/* Clear Cart Item */
 		if($user_id != ''){
-			$cartItems =  Cart::where('user_id', $user_id)->where('product_id', $product_id)->delete();
+			$cartItems =  Cart::where('user_id', $user_id)->where('product_id', $product_id)->get();
+			print_r($cartItems);
 			if($cartItems){
 				$result = [
 					'status' => 'Item removed'
