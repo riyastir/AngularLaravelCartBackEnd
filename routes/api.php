@@ -25,6 +25,7 @@ Route::post('cart/view', 'API\CartController@viewCart');
 Route::post('cart/add', 'API\CartController@addToCart');
 Route::post('cart/clear', 'API\CartController@clearCart');
 Route::post('cart/remove', 'API\CartController@removeItem');
+Route::post('cart/swap', 'API\CartController@swapQuantity');
 Route::post('order/create', 'API\OrderController@postOrder');
 Route::get('products', 'API\ProductsController@getProducts');
 });
