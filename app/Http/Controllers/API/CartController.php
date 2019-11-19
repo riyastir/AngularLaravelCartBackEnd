@@ -150,9 +150,10 @@ class CartController extends Controller
 		$user_id = $user->id;
 		$cartItems = Cart::where('user_id', $user_id)->with('productDetails')->get();
 		$total = $cartItems->sum('total_price');
+		$count = $cartItems->sum('quantity');
 		$result = [
 			'items' => $cartItems,
-			'count' => count($cartItems),
+			'count' => $count,
 			'total'	=> number_format($total, 2)
 		];
 		}
