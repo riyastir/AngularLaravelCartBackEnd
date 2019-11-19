@@ -147,7 +147,7 @@ class CartController extends Controller
 	{	
 		$user = Auth::user();
 		if(isset($user->id)){
-		$user_id = $request->user_id;
+		$user_id = $user->id;
 		$cartItems = Cart::where('user_id', $user_id)->with('productDetails')->get();
 		$total = $cartItems->sum('total_price');
 		$result = [
@@ -168,7 +168,7 @@ class CartController extends Controller
 		
 		$user = Auth::user();
 		if(isset($user->id)){
-		$user_id = $request->user_id;
+		$user_id = $user->id;
 		/* Clear Cart Items */
 		if($user_id != ''){
 		$cartItems =  Cart::where('user_id', $user_id)->delete();
@@ -200,7 +200,7 @@ class CartController extends Controller
 	public function removeItem(Request $request){
 		$user = Auth::user();
 		if(isset($user->id)){
-		$user_id = $request->user_id;
+		$user_id = $user->id;
 		$product_id = $request->product_id;
 
 		/* Clear Cart Item */
