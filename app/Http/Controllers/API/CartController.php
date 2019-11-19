@@ -29,7 +29,7 @@ class CartController extends Controller
 		$discount = 0;
 		$free_qty = 0;
 		$cartItems = Cart::where('user_id', $customer_id)->where('product_id', $request->product_id)->get();
-		
+		$special_price = false;
 		//If Product already in cart then add quantity and check the discount conditions
 		if (count($cartItems) > 0) {
 			$request->quantity = $request->quantity + $cartItems[0]->quantity;
