@@ -14,7 +14,7 @@ class OrderController extends Controller
 	public function postOrder(Request $request){
 		$user = Auth::user();
 		if(isset($user->id)){
-		$user_id = $request->user_id;
+		$user_id = $user->id;
 		$items = Cart::where('user_id',$user_id)->get();
 		$total = $items->sum('total_price');
 		$orderData = [
