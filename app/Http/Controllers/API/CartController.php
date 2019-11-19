@@ -205,8 +205,7 @@ class CartController extends Controller
 
 		/* Clear Cart Item */
 		if($user_id != ''){
-			$cartItems =  Cart::where('user_id', $user_id)->where('product_id', $product_id)->get();
-			print_r($cartItems);
+			$cartItems =  Cart::where('user_id', $user_id)->where('product_id', $product_id)->delete();
 			if($cartItems){
 				$result = [
 					'status' => 'Item removed'
